@@ -1,0 +1,6 @@
+#ignore the .vagrant directory
+.vagrant/
+
+# Ignore logs or temporary files
+*.log
+*.tmp
