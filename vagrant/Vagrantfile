@@ -1,0 +1,44 @@
+# File: Vagrantfile
+Vagrant.configure("2") do |config|
+  # Ansible Control Node (Manager)
+  config.vm.define "manager" do |manager|
+    manager.vm.box = "ubuntu/jammy64"  # Ubuntu 22.04 LTS
+    manager.vm  webname = "manager"
+    manager.vm.network "private_network", ip: "192.168.56.10"
+    manager.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"  # 1GB RAM
+      vb.cpus = 1
+    end
+    # Install Ansible on the manager
+    manager.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+      sudo apt install ansible -y
+    SHELL
+  end
+
+  # Managed web 1
+  config.vm.define "web-server" do |web|
+    web.vm.box = "ubuntu/jammy64"
+    web.vm.hostname = "web-server"
+    web.vm.network "private_network", ip: "192.168.56.11"
+    web.vm.network "forwarded_port", guest: 80,  host: 8080, auto_correct: true
+    web.vm.usable_port_range = (8000..9000) 
+    web.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"  # 512MB RAM
+      vb.cpus = 1
+    end
+  end
+
+  # Managed web 2
+  config.vm.define "monitoring-server" do  |mon|
+    mon.vm.box = "ubuntu/jammy64"
+    mon.vm.hostname = "monitoring-server"
+    mon.vm.network "private_network", ip: "192.168.56.12"
+    mon.vm.network "forwarded_port", guest: 80,  host: 8080, auto_correct: true
+    mon.vm.usable_port_range = (8000..9000) 
+    mon.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"
+      vb.cpus = 1
+    end
+  end
+end
