@@ -1,0 +1,71 @@
+- name: Install Prometheus
+  apt:
+    name: prometheus
+    state: present
+    update_cache: yes
+
+- name: Install Node Exporter
+  apt:
+    name: prometheus-node-exporter
+    state: present
+
+- name: Configure Prometheus to monitor all nodes
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: '0644'
+  notify: restart prometheus
+
+- name: Ensure Prometheus is running
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: Ensure Node Exporter is running
+  service:
+    name: prometheus-node-exporter
+    state: started
+    enabled: yes
+
+- name: Install Grafana
+  apt:
+    name: grafana
+    state: present
+
+- name: Ensure Grafana is running
+  service:
+    name: grafana
+    state: started
+    enabled: yes
+
+- name: Wait for Grafana to start
+  wait_for:
+    port: 3000
+    delay: 5
+    timeout: 30
+
+- name: Add Prometheus datasource to Grafana
+  uri:
+    url: http://localhost:3000/api/datasources
+    method: POST
+    user: admin
+    password: admin
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      name: "Prometheus"
+      type: "prometheus"
+      url: "http://localhost:9090"
+      access: "proxy"
+      isDefault: true
+    status_code: 200
+    timeout: 5
+  register: grafana_datasource
+  until: grafana_datasource.status == 200
+  retries: 5
+  delay: 10
+
