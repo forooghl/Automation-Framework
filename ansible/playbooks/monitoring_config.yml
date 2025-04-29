@@ -1,0 +1,7 @@
+---
+- name: Set up monitoring with Prometheus and Grafana
+  hosts: monitoring-server 
+  become: true
+  roles:
+    - monitor
+
