@@ -4,3 +4,7 @@
 # Ignore logs or temporary files
 *.log
 *.tmp
+
+# Ignore secrets
+secrets.yml
+*.vault

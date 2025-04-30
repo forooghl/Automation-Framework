@@ -1,6 +1,8 @@
 ---
 - name: Set up monitoring with Prometheus and Grafana
   hosts: monitoring-server 
+  vars_files:
+    - secrets.yml
   become: true
   roles:
     - monitor
