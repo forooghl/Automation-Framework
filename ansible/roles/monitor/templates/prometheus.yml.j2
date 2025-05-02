@@ -6,10 +6,10 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  - job_name: 'node_exporter'
+  - job_name: 'node'
     static_configs:
       - targets:
-{% for host in groups['all'] %}
-          - '{{ hostvars[host].inventory_hostname }}:9100'
-{% endfor %}
+        {% for host in groups['servers'] %}
+        - '{{ hostvars[host].ansible_host }}:9100'
+        {% endfor %}
 
