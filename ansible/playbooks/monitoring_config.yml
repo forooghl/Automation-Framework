@@ -2,7 +2,8 @@
 - name: Set up monitoring with Prometheus and Grafana
   hosts: monitoring-server 
   vars_files:
-    - secrets.yml
+    - ~/ansible/inventories/dev/group_vars/secrets.yml
+    - ~/ansible/inventories/dev/group_vars/network.yml
   become: true
   roles:
     - monitor
