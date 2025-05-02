@@ -1,0 +1,17 @@
+---
+- name: Install Prometheus
+  apt:
+    name: prometheus
+    state: present
+
+- name: Configure Prometheus
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+  notify: restart prometheus
+
+- name: Ensure Prometheus is running
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
