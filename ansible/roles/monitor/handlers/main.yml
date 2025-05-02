@@ -3,3 +3,7 @@
     name: prometheus
     state: restarted
 
+- name: restart snmp-exporter
+  service:
+    name: prometheus-snmp-exporter
+    state: restarted
