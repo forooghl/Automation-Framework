@@ -5,6 +5,7 @@
 *.log
 *.tmp
 
-# Ignore secrets
+# Ignore vaults
 secrets.yml
+network.yml
 *.vault
