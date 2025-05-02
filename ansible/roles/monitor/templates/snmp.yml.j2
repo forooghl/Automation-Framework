@@ -1,0 +1,10 @@
+modules:
+  vyos:
+    walk:
+      - sysUpTime
+      - interfaces
+      - ifXTable
+      - ipNetToMediaTable
+    version: 2c
+    auth:
+      community: "{{ vault_snmp_community }}"
