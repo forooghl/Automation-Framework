@@ -1,0 +1,9 @@
+---
+- name: Configure SNMP service
+  vyos_config:
+    lines:
+      - set service snmp community {{ vault_snmp_community }} authorization ro
+      - set service snmp listen-address {{ ansible_host }}
+      - set service snmp contact "Network Monitoring"
+      - set service snmp description "VyOS Router"
+    save: yes
