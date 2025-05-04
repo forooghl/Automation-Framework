@@ -1,0 +1,10 @@
+---
+- name: Configure VyOS 
+  hosts: network-devices
+  connection: network_cli
+  gather_facts: false
+  vars_files:
+    - ~/ansible/inventories/dev/group_vars/network.yml
+  roles:
+    - vyos_config
+    
