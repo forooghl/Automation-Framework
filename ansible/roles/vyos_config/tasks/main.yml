@@ -1,0 +1,8 @@
+---
+- name: Include SNMP configuration
+  include_tasks: snmp.yml
+  tags: snmp
+
+- name: Include firewall configuration
+  include_tasks: firewall.yml
+  tags: firewall
