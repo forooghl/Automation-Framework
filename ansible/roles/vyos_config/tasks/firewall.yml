@@ -1,0 +1,18 @@
+---
+- name: Configure IPv4 firewall for SNMP access
+  vyos_config:
+    lines:
+      # Create firewall rule-set
+      - set firewall ipv4 name WAN_IN default-action 'drop'
+      - set firewall ipv4 name WAN_IN description 'WAN inbound traffic'
+      
+      # Add SNMP allow rule
+      - set firewall ipv4 name WAN_IN rule 10 action 'accept'
+      - set firewall ipv4 name WAN_IN rule 10 description 'Allow SNMP from monitoring server'
+      - set firewall ipv4 name WAN_IN rule 10 protocol 'udp'
+      - set firewall ipv4 name WAN_IN rule 10 destination port '161'
+      - set firewall ipv4 name WAN_IN rule 10 source address 192.168.56.12
+      
+      # Apply to interface
+      - set interfaces ethernet eth0 firewall ipv4 in name 'WAN_IN'
+    save: yes
