@@ -1,8 +1,8 @@
 ---
 - name: Apply base configuration to all nodes
-  hosts: all
-  become: yes
-  gather_facts: yes
+  hosts: servers
+  become: true
+  gather_facts: true
 
   tasks:
     - name: Update apt package index
