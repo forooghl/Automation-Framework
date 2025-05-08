@@ -1,0 +1,23 @@
+---
+- name: Save VyOS config to file
+  vyos_command:
+    commands:
+      - show configuration commands
+  register: config_output
+
+- name: Save config to file on VyOS
+  copy:
+    content: "{{ config_output.stdout[0] }}"
+    dest: "/tmp/{{ inventory_hostname }}_vyos_backup.cfg"
+
+- name: Fetch backup from VyOS to control node
+  fetch:
+    src: "/tmp/{{ inventory_hostname }}_vyos_backup.cfg"
+    dest: "/tmp/"
+    flat: yes
+
+- name: Backup VyOS configuration
+  delegate_to: monitoring-server
+  copy:
+    src: "/tmp/{{ inventory_hostname }}_vyos_backup.cfg"
+    dest: "/home/vagrant/backups/{{ inventory_hostname }}_vyos_backup.cfg"

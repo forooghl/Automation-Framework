@@ -1,0 +1,10 @@
+---
+- name: Backup servers configuration
+  include_tasks: backup_servers.yml
+  tags: backup_servers
+  when: backup_target == "servers"
+
+- name: Backup VyOS configuration
+  include_tasks: backup_vyos.yml
+  tags: backup_vyos
+  when: backup_target == "vyos"

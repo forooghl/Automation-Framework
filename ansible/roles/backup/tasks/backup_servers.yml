@@ -1,0 +1,20 @@
+---    
+- name: Install borgbackup
+  apt:
+    name: borgbackup
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Create backup directory on monitoring server
+  delegate_to: monitoring-server
+  file:
+    path: "/backups/{{ inventory_hostname }}"
+    state: directory
+    mode: '0755'
+
+- name: Configure borgbackup cron job
+  cron:
+    name: "Daily backup"
+    minute: "0"
+    hour: "2"
+    job: "borg create --stats --progress /backups/{{ inventory_hostname }}::'{now:%Y-%m-%d}' /etc /var/lib/important-data"

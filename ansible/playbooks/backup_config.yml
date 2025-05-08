@@ -1,0 +1,17 @@
+---
+- name: Configure backup from servers
+  hosts: servers
+  become: true
+  roles:
+    - backup
+  vars:
+        backup_target: "servers"
+
+- name: Configure backup from network devices
+  hosts: network-devices
+  connection: network_cli
+  roles:
+    - backup
+  vars:
+      backup_target: "vyos"
+
