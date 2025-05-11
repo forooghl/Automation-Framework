@@ -27,7 +27,7 @@
         url: "http://localhost:3000/api/health"
         return_content: yes
       register: grafana_health
-      until: "'OK' in grafana_health.content"
+      until: "grafana_health.json.database == 'ok'"
       retries: 10
       delay: 10
       when: grafana_enabled | default(true)
