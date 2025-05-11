@@ -3,7 +3,8 @@
   hosts: servers
   become: true
   gather_facts: true
-
+  vars_files:
+    - ~/ansible/inventories/dev/group_vars/secrets.yml
   tasks:
     - name: Update apt package index
       apt:
