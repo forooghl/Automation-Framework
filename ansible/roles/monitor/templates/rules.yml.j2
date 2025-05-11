@@ -1,0 +1,19 @@
+{% raw %}
+groups:
+- name: example
+  rules:
+  - alert: HighCPUUsage
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU usage on {{ $labels.instance }}"
+  - alert: InterfaceDown
+    expr: ifOperStatus{job="snmp"} == 2
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Interface down on {{ $labels.instance }}"
+{% endraw %}
