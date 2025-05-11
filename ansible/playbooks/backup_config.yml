@@ -13,6 +13,7 @@
 - name: Configure backup from network devices
   hosts: network-devices
   connection: network_cli
+  become: true
   vars_files:
     - ~/ansible/inventories/dev/group_vars/secrets.yml
   roles:
