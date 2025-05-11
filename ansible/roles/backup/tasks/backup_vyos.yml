@@ -20,4 +20,4 @@
   delegate_to: monitoring-server
   copy:
     src: "/tmp/{{ inventory_hostname }}_vyos_backup.cfg"
-    dest: "/home/vagrant/backups/{{ inventory_hostname }}_vyos_backup.cfg"
+    dest: "/backups/vyOS/{{ inventory_hostname }}_vyos_backup.cfg"
