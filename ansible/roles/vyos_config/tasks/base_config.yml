@@ -1,0 +1,11 @@
+- name: Configure loopback interface
+  vyos_config:
+    lines:
+      - set interfaces loopback lo address 10.0.0.{{ inventory_hostname[-1] }}/32
+    save: yes
+
+- name: Configure OSPF
+  vyos_config:
+    lines:
+      - set protocols ospf area 0 network 192.168.56.0/24
+    save: yes
