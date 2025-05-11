@@ -9,3 +9,9 @@
     save: yes
   register: snmp_config
   failed_when: snmp_config.failed
+
+- name: Verify SNMP configuration
+  vyos_command:
+    commands: show configuration commands | match snmp
+  register: snmp_verify
+  failed_when: "'snmp' not in snmp_verify.stdout[0]"
