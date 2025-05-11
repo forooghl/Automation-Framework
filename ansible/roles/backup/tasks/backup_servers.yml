@@ -1,8 +1,18 @@
----    
+---
 - name: Install borgbackup
   apt:
     name: borgbackup
     state: present
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure SSH key is present for backup
+  copy:
+    src: "{{ ssh_key_path }}"
+    dest: "/home/vagrant/.ssh/backup_key"
+    mode: '0600'
+    owner: vagrant
+    group: vagrant
   when: ansible_os_family == 'Debian'
 
 - name: Create backup directory on monitoring server
@@ -11,10 +21,28 @@
     path: "/backups/{{ inventory_hostname }}"
     state: directory
     mode: '0755'
+    owner: vagrant
+    group: vagrant
+
+- name: Initialize Borg repository
+  delegate_to: monitoring-server
+  command: borg init --encryption=none /backups/{{ inventory_hostname }}
+  args:
+    creates: /backups/{{ inventory_hostname }}/config
+  register: borg_init
+  failed_when: borg_init.rc != 0 and 'already exists' not in borg_init.stderr
 
 - name: Configure borgbackup cron job
   cron:
     name: "Daily backup"
     minute: "0"
     hour: "2"
-    job: "borg create --stats --progress /backups/{{ inventory_hostname }}::'{now:%Y-%m-%d}' /etc /var/lib/important-data"
+    job: "/usr/bin/borg create --stats --progress -C auto,zlib ssh://vagrant@192.168.56.12/backups/{{ inventory_hostname }}::{now:%Y-%m-%d} /etc /var/lib/important-data --exclude-caches --remote-path=/usr/bin/borg --keyfile=/home/vagrant/.ssh/backup_key"
+    user: vagrant
+  when: ansible_os_family == 'Debian'
+
+- name: Prune old backups
+  delegate_to: monitoring-server
+  command: borg prune --keep-daily=7 --keep-weekly=4 /backups/{{ inventory_hostname }}
+  register: borg_prune
+  failed_when: borg_prune.rc != 0
