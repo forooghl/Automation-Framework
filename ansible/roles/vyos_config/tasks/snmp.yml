@@ -7,3 +7,5 @@
       - set service snmp contact "Network Monitoring"
       - set service snmp description "VyOS Router"
     save: yes
+  register: snmp_config
+  failed_when: snmp_config.failed
