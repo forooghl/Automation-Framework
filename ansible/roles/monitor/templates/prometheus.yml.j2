@@ -12,4 +12,17 @@ scrape_configs:
         {% for host in groups['servers'] %}
         - '{{ hostvars[host].ansible_host }}:9100'
         {% endfor %}
+        
+  - job_name: 'snmp'
+    static_configs:
+      - targets:
+        {% for host in groups['network-devices'] %}
+        - '{{ hostvars[host].ansible_host }}:9100'
+        {% endfor %}
+    metrics_path: /snmp
+    params:
+      module: [vyos]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
 
