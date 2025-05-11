@@ -1,0 +1,16 @@
+- name: Update apt package index
+  apt:
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install common packages
+  apt:
+    name: "{{ common_packages }}"
+    state: present
+  vars:
+    common_packages:
+      - curl
+      - wget
+      - git
+      - unzip
+      - net-tools

@@ -1,0 +1,16 @@
+---
+- name: update and install package
+  include_tasks: package_config.yml
+  tags: package_config
+
+- name: servers basic configuration
+  include_tasks: basic_config.yml
+  tags: basic_config
+
+- name: Web Server configuration
+  include_tasks: webServer_config.yml
+  tags: webServer_config
+
+- name: SSH and firewall configuration
+  include_tasks: security_config.yml
+  tags: security_config

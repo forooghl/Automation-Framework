@@ -1,0 +1,9 @@
+- name: Set timezone to UTC
+  timezone:
+    name: UTC
+
+- name: Ensure NTP is installed and running
+  apt:
+    name: ntp
+    state: present
+  notify: restart ntp

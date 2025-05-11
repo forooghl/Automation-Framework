@@ -5,36 +5,5 @@
   gather_facts: true
   vars_files:
     - ~/ansible/inventories/dev/group_vars/secrets.yml
-  tasks:
-    - name: Update apt package index
-      apt:
-        update_cache: yes
-      when: ansible_os_family == 'Debian'
-
-    - name: Install common packages
-      apt:
-        name: "{{ common_packages }}"
-        state: present
-      vars:
-        common_packages:
-          - curl
-          - wget
-          - git
-          - unzip
-          - net-tools
-
-    - name: Set timezone to UTC
-      timezone:
-        name: UTC
-
-    - name: Ensure NTP is installed and running
-      apt:
-        name: ntp
-        state: present
-      notify: restart ntp
-
-  handlers:
-    - name: restart ntp
-      service:
-        name: ntp
-        state: restarted
+  roles:
+    - server_config
