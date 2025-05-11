@@ -15,3 +15,14 @@
     name: prometheus
     state: started
     enabled: yes
+
+- name: Configure Prometheus alerting rules
+  template:
+    src: rules.yml.j2
+    dest: /etc/prometheus/rules.yml
+    owner: prometheus
+    group: prometheus
+    mode: '0644'
+  notify: restart prometheus
+  register: rules_config
+  failed_when: rules_config.failed
