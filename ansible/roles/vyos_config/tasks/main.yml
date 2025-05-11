@@ -2,3 +2,7 @@
 - name: Include SNMP configuration
   include_tasks: snmp.yml
   tags: snmp
+
+- name: base configuration
+  include_tasks: base_config.yml
+  tags: base_config
