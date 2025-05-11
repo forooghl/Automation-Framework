@@ -1,0 +1,5 @@
+- name: Install Nginx on web server
+  apt:
+    name: nginx
+    state: present
+  when: inventory_hostname == 'web-server'
