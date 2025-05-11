@@ -2,16 +2,21 @@
 - name: Configure backup from servers
   hosts: servers
   become: true
+  vars_files:
+    - ~/ansible/inventories/dev/group_vars/secrets.yml
   roles:
     - backup
   vars:
-        backup_target: "servers"
+    backup_target: "servers"
+    
 
 - name: Configure backup from network devices
   hosts: network-devices
   connection: network_cli
+  vars_files:
+    - ~/ansible/inventories/dev/group_vars/secrets.yml
   roles:
     - backup
   vars:
-      backup_target: "vyos"
+    backup_target: "vyos"
 

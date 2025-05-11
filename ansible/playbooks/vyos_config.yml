@@ -5,6 +5,7 @@
   gather_facts: false
   vars_files:
     - ~/ansible/inventories/dev/group_vars/network.yml
+    - ~/ansible/inventories/dev/group_vars/secrets.yml
   roles:
     - vyos_config
     
