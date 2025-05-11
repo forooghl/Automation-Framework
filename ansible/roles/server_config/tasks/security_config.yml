@@ -1,0 +1,30 @@
+- name: Harden SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    backup: yes
+  notify: restart ssh
+  register: ssh_config
+  failed_when: ssh_config.failed
+
+- name: Install UFW
+  apt:
+    name: ufw
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Allow SSH in UFW
+  ufw:
+    rule: allow
+    port: 22
+    proto: tcp
+  when: ansible_os_family == 'Debian'
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+    policy: deny
+  when: ansible_os_family == 'Debian'
