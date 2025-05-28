@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import subprocess, os
-from config import API_KEY
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)
+api_key = os.getenv('GRAFANA_API_KEY')
 
 def run_playbook(playbook_name, extra_vars=None):
     try:
