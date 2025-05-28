@@ -10,3 +10,6 @@ secrets.yml
 network.yml
 *.vault
 ansible/vault_password
+
+# Ignore enviroment value
+.env
