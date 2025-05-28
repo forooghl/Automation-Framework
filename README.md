@@ -8,13 +8,13 @@ With this framework, you can:
 - Manage network devices (like VyOS routers) and Linux servers effortlessly.
 - Automate routine tasks such as configuration, backups, and disaster recovery.
 - Monitor system thresholds and trigger actions based on system status.
-- Interact with the framework through an easy-to-use **Django-based web interface**.
+- Interact with the framework through an easy-to-use **FLASK-based web interface**.
 
 ## Features
 - **Multi-device management**: Configure network devices and servers in a consistent and automated way.
 - **Disaster recovery**: Back up configurations regularly and restore them when needed.
 - **Threshold-based monitoring**: Set custom thresholds (e.g., CPU, disk usage) and trigger actions like alerts or automatic remediation.
-- **Web UI**: A simple web interface built with Django for managing automation tasks, viewing logs, and configuring the system.
+- **Web UI**: A simple web interface built with FLASK for managing automation tasks, viewing logs, and configuring the system.
 
 ## Tools Used
 
@@ -23,7 +23,7 @@ This framework is built using the following tools:
 - **Vagrant**: For managing virtual machines and ensuring a consistent development environment.
 - **GNS3**: Network simulator for creating virtual network topologies.
 - **VyOS**: Open-source network OS for router functionality.
-- **Django**: A web framework to manage and interact with the automation tasks.
+- **FLASK**: A web framework to manage and interact with the automation tasks.
 
 ## Contributing
 
