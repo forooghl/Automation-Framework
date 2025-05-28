@@ -33,6 +33,38 @@ def run_playbook(playbook_name, extra_vars=None):
     except Exception as e:
         return {"status": "خطایی رخ داده است", "output": "", "error": str(e)}
 
+def run_ansible_ping(group_name):
+    try:
+        cmd = [
+        'ansible',
+        '-i', '/home/vagrant/ansible/inventories/dev/hosts.ini',
+        group_name,
+        '-m', 'ping',
+        '-e', '@/home/vagrant/ansible/inventories/dev/group_vars/secrets.yml'
+        ]
+        vault_password_file = '/home/vagrant/ansible/vault_password'
+        if os.path.exists(vault_password_file):
+            cmd.append('--vault-password-file=' + vault_password_file)
+        
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        result.check_returncode()
+        return {"status": "success", "output": result.stdout, "error": ""}
+    except subprocess.CalledProcessError as e:
+        return {"status": "غیر فعال", "output": "", "error": f"Ping failed: {e.stderr}"}
+    except Exception as e:
+        return {"status": "غیر فعال", "output": "", "error": str(e)}
+
+# Endpoint to ping devices with dynamic group name
+@app.route('/status', methods=['GET'])
+def ping_devices():
+    group_name = request.args.get('group')  # Get group name from URL query parameter
+    if not group_name:
+        return jsonify({"status": "error", "message": "Group name is required"}), 400
+    result = run_ansible_ping(group_name)
+    if result["status"] == "success":
+        return jsonify({"status": "فعال", "details": result["output"]})
+    return jsonify(result)
+
 # endpoint running network device configuration playbook
 @app.route('/devices', methods=['GET'])
 def get_devices_status():
