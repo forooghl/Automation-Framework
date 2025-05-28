@@ -1,166 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Network Automation Dashboard</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Automation Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    <body class="bg-gray-100 font-sans">
+        <nav class="bg-blue-600 text-white p-8 shadow-md mb-6">
+            <h1 class="text-2xl font-bold text-center">Network Automation Dashboard</h1>
+        </nav>
+        <div class="container mx-auto p-2">
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <div class="flex flex-row justify-between">
+                        <h2 class="text-lg font-semibold mb-2">دستگاه‌های شبکه</h2>
+                        <p id="ping-network-devices-status" class="text-gray-700"></p>
+                    </div>
+                    <p id="devices-status" class="text-gray-700"></p>
+                    <div class="flex flex-row justify-around flex-wrap">
+                        <button
+                            onclick="fetchStatus('network-devices')"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            وضعیت
+                        </button>
+                        <button
+                            onclick="runDevicePlaybook()"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            اجرای دستورات
+                        </button>
+                        <button
+                            onclick="showPlaybook('vyos')"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            نمایش دستورات
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <div class="flex flex-row justify-between">
+                        <h2 class="text-lg font-semibold mb-2">سرورها</h2>
+                        <p id="ping-servers-status" class="text-gray-700"></p>
+                    </div>
+                    <p id="servers-status" class="text-gray-700"></p>
+                    <div class="flex flex-row justify-around flex-wrap">
+                        <button
+                            onclick="fetchStatus('servers')"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            وضعیت
+                        </button>
+                        <button
+                            onclick="runServerPlaybook()"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            اجرای دستورات
+                        </button>
+                        <button
+                            onclick="showPlaybook('server')"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            نمایش دستورات
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-lg font-semibold mb-2">مانیتورینگ</h2>
+                    <p id="monitoring-status" class="text-gray-700"></p>
+                    <p id="monitoring-status" class="text-gray-700"></p>
+                    <div class="flex flex-row justify-around flex-wrap">
+                        <button
+                            onclick="runMonitoringPlaybook()"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            وضعیت
+                        </button>
+                        <button
+                            onclick="runMonitoringPlaybook()"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            اجرای دستورات
+                        </button>
+                        <button
+                            onclick="showPlaybook('monitoring')"
+                            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            نمایش دستورات
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-<body class="bg-gray-100 font-sans">
-<div class="container mx-auto p-6">
-    <header class="bg-blue-600 text-white p-4 rounded-lg shadow-md mb-6">
-        <h1 class="text-2xl font-bold">Network Automation Dashboard</h1>
-    </header>
+            <section class="bg-white p-4 rounded-lg shadow-md mb-6 hidden playbook-tasks-div">
+                <h2 id="playbook-title" class="text-lg font-semibold mb-4"></h2>
+                <div
+                    id="playbook-tasks"
+                    dir="ltr"
+                    class="font-bold h-40 overflow-y-auto p-2 rounded-lg m-2 whitespace-pre-wrap"
+                ></div>
+            </section>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div class="bg-white p-4 rounded-lg shadow-md">
-            <h2 class="text-lg font-semibold mb-2">وضعیت دستگاه‌های شبکه</h2>
-            <p id="devices-status" class="text-gray-700">در حال بارگذاری...</p>
-            <button onclick="fetchDevicesStatus()"
-                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">به‌روزرسانی</button>
+            <section class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold mb-4">اجرای بکاپ (بازیابی)</h2>
+                <button onclick="runRecoveryScript()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    اجرای بکاپ
+                </button>
+                <p id="recovery-status" class="text-gray-700 mt-2">وضعیت: غیرفعال</p>
+            </section>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow-md">
-            <h2 class="text-lg font-semibold mb-2">وضعیت سرورها</h2>
-            <p id="servers-status" class="text-gray-700">در حال بارگذاری...</p>
-            <button onclick="fetchServersStatus()"
-                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">به‌روزرسانی</button>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow-md">
-            <h2 class="text-lg font-semibold mb-2">وضعیت مانیتورینگ</h2>
-            <p id="monitoring-status" class="text-gray-700">در حال بارگذاری...</p>
-            <button onclick="fetchMonitoringStatus()"
-                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">به‌روزرسانی</button>
-        </div>
-    </section>
 
-    <section class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h2 class="text-lg font-semibold mb-4">مدیریت تنظیمات</h2>
-        <div class="mb-4">
-            <label for="device-select" class="block text-gray-700 mb-2">انتخاب دستگاه:</label>
-            <select id="device-select" class="w-full p-2 border rounded">
-                <option value="device1">دستگاه شبکه ۱ (VyOS)</option>
-                <option value="device2">دستگاه شبکه ۲ (VyOS)</option>
-                <option value="server1">سرور ۱</option>
-            </select>
-        </div>
-        <div class="mb-4">
-            <label for="config-input" class="block text-gray-700 mb-2">دستور تنظیمات:</label>
-            <textarea id="config-input" class="w-full p-2 border rounded" rows="3"
-                      placeholder="دستور تنظیمات را وارد کنید (مثلاً set firewall rule)"></textarea>
-        </div>
-        <button onclick="applyConfiguration()"
-                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">اعمال تنظیمات</button>
-    </section>
+        <script>
+            async function fetchStatus(group) {
+                const statusElem = document.getElementById(`ping-${group}-status`);
+                statusElem.style.color = "";
+                statusElem.innerText = "بررسی وضعیت...";
 
-    <section class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h2 class="text-lg font-semibold mb-4">تنظیم هشدارها و آستانه‌ها</h2>
-        <div class="mb-4">
-            <label for="threshold-input" class="block text-gray-700 mb-2">آستانه CPU (٪):</label>
-            <input type="number" id="threshold-input" class="w-full p-2 border rounded" placeholder="مثلاً 80">
-        </div>
-        <button onclick="setThreshold()"
-                class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">تنظیم آستانه</button>
-    </section>
-
-    <section class="bg-white p-4 rounded-lg shadow-md">
-        <h2 class="text-lg font-semibold mb-4">اجرای بکاپ (بازیابی)</h2>
-        <button onclick="runRecoveryScript()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">اجرای
-            بکاپ</button>
-        <p id="recovery-status" class="text-gray-700 mt-2">وضعیت: غیرفعال</p>
-    </section>
-</div>
-
-<script>
-    async function fetchDevicesStatus() {
-        document.getElementById('devices-status').innerText = 'در حال بارگذاری...';
-        try {
-            const response = await fetch('http://192.168.56.10:5005/devices');
-            const data = await response.json();
-            document.getElementById('devices-status').innerText = data.status;
-        } catch (error) {
-            document.getElementById('devices-status').innerText = 'خطا در ارتباط با سرور';
-        }
-    }
-
-    async function fetchServersStatus() {
-        document.getElementById('servers-status').innerText = 'در حال بارگذاری...';
-        try {
-            const response = await fetch('http://192.168.56.10:5005/servers');
-            const data = await response.json();
-            document.getElementById('servers-status').innerText = data.status;
-        } catch (error) {
-            document.getElementById('servers-status').innerText = 'خطا در ارتباط با سرور';
-        }
-    }
-
-    async function fetchMonitoringStatus() {
-        document.getElementById('monitoring-status').innerText = 'در حال بارگذاری...';
-        try {
-            const response = await fetch('http://192.168.56.10:5005/monitoring');
-            const data = await response.json();
-            document.getElementById('monitoring-status').innerText = data.status;
-        } catch (error) {
-            document.getElementById('monitoring-status').innerText = 'خطا در ارتباط با سرور';
-        }
-    }
-
-    async function applyConfiguration() {
-        const device = document.getElementById('device-select').value;
-        const command = document.getElementById('config-input').value;
-        try {
-            const response = await fetch('http://192.168.56.10:5005/configure', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ device, command })
-            });
-            const data = await response.json();
-            alert(data.message);
-        } catch (error) {
-            alert('خطا در اعمال تنظیمات');
-        }
-    }
-
-    async function setThreshold() {
-        const threshold = document.getElementById('threshold-input').value;
-        try {
-            const response = await fetch('http://192.168.56.10:5005/set-threshold', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ threshold })
-            });
-            const data = await response.json();
-            alert(data.message);
-        } catch (error) {
-            alert('خطا در تنظیم آستانه');
-        }
-    }
-
-    async function runRecoveryScript() {
-        document.getElementById('recovery-status').innerText = 'در حال اجرا...';
-        try {
-            const response = await fetch('http://192.168.56.10:5005/run-recovery', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+                try {
+                    const response = await fetch(`http://192.168.56.10:5005/status?group=${group}`);
+                    const data = await response.json();
+                    if (data.status == "فعال") {
+                        statusElem.innerText = data.status;
+                        statusElem.style.color = "green";
+                    } else {
+                        statusElem.innerText = data.status;
+                        statusElem.style.color = "red";
+                    }
+                } catch (error) {
+                    statusElem.innerText = "مشکلی رخ داده است";
+                    statusElem.style.color = "red";
                 }
-            });
-            const data = await response.json();
-            document.getElementById('recovery-status').innerText = 'وضعیت: تکمیل شد';
-        } catch (error) {
-            document.getElementById('recovery-status').innerText = 'خطا در اجرای بکاپ';
-        }
-    }
+            }
 
-    fetchDevicesStatus();
-    fetchServersStatus();
-    fetchMonitoringStatus();
-</script>
-</body>
+            async function showPlaybook(playbook_name) {
+                const tasksDiv = document.querySelector(".playbook-tasks-div");
+                tasksDiv.classList.remove("hidden");
+                document.getElementById("playbook-tasks").innerText = "درحال دریافت اطلاعات...";
+                try {
+                    const response = await fetch(
+                        `http://192.168.56.10:5005/get-playbook?playbook_name=${playbook_name}`
+                    );
+                    const data = await response.json();
+                    if (data.status === "success") {
+                        document.getElementById("playbook-title").innerText = data.title;
+                        document.getElementById("playbook-tasks").innerText = data.playbook;
+                    } else {
+                        document.getElementById("playbook-tasks").innerText =
+                            data.status + (data.message ? "\nError: " + data.message : "");
+                        document.getElementById("playbook-tasks").style.color = "red";
+                    }
+                } catch (error) {
+                    console.log(error);
+                    document.getElementById("playbook-tasks").innerText = "Error fetching tasks";
+                    document.getElementById("playbook-tasks").style.color = "red";
+                }
+            }
 
+            async function runDevicePlaybook() {
+                document.getElementById("devices-status").innerText = "در حال بارگذاری...";
+                try {
+                    const response = await fetch("http://192.168.56.10:5005/devices");
+                    const data = await response.json();
+                    document.getElementById("devices-status").innerText = data.status;
+                } catch (error) {
+                    document.getElementById("devices-status").innerText = "خطا در ارتباط با سرور";
+                }
+            }
+
+            async function runServerPlaybook() {
+                document.getElementById("servers-status").innerText = "در حال بارگذاری...";
+                try {
+                    const response = await fetch("http://192.168.56.10:5005/servers");
+                    const data = await response.json();
+                    document.getElementById("servers-status").innerText = data.status;
+                } catch (error) {
+                    document.getElementById("servers-status").innerText = "خطا در ارتباط با سرور";
+                }
+            }
+
+            async function runMonitoringPlaybook() {
+                document.getElementById("monitoring-status").innerText = "در حال بارگذاری...";
+                try {
+                    const response = await fetch("http://192.168.56.10:5005/monitoring");
+                    const data = await response.json();
+                    document.getElementById("monitoring-status").innerText = data.status;
+                } catch (error) {
+                    document.getElementById("monitoring-status").innerText = "خطا در ارتباط با سرور";
+                }
+            }
+
+            async function runRecoveryScript() {
+                document.getElementById("recovery-status").innerText = "در حال اجرا...";
+                try {
+                    const response = await fetch("http://192.168.56.10:5005/run-recovery");
+                    const data = await response.json();
+                    document.getElementById("recovery-status").innerText = "وضعیت: تکمیل شد";
+                } catch (error) {
+                    document.getElementById("recovery-status").innerText = "خطا در اجرای بکاپ";
+                }
+            }
+
+            fetchStatus("network-devices");
+            fetchStatus("servers");
+        </script>
+    </body>
 </html>
