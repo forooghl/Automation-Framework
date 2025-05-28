@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import subprocess, os
+import subprocess, os, yaml
 from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)
+load_dotenv()
 api_key = os.getenv('GRAFANA_API_KEY')
 
 def run_playbook(playbook_name, extra_vars=None):
@@ -16,14 +17,14 @@ def run_playbook(playbook_name, extra_vars=None):
             cmd.append('--extra-vars')
             cmd.append(extra_vars_str
                     )
-
+            
         # Prompt for vault password or use a file if available
         vault_password_file = '/home/vagrant/ansible/vault_password'  # Adjust path as needed
         if os.path.exists(vault_password_file):
             cmd.append('--vault-password-file=' + vault_password_file)
         else:
             return {"status": "خطایی رخ داده است", "output": "", "error": "vault password file not exist."}
-
+        
         result = subprocess.run(cmd, capture_output=True, text=True)
         result.check_returncode()  # Check if the command succeeded
         return {"status": "success", "output": result.stdout, "error": ""}
@@ -53,7 +54,7 @@ def run_ansible_ping(group_name):
         return {"status": "غیر فعال", "output": "", "error": f"Ping failed: {e.stderr}"}
     except Exception as e:
         return {"status": "غیر فعال", "output": "", "error": str(e)}
-
+    
 # Helper function to convert JSON to a YAML-like string
 def json_to_yaml_string(obj, indent=0):
     output = ''
@@ -179,7 +180,7 @@ def get_playbook_details(playbook_name):
         return {"status": "success", "playbook": playbook_string}
     except Exception as e:
         return {"status": "error", "message": f"Error reading playbook {playbook_name}: {str(e)}"}, 500
-
+    
 # Endpoint to get and display playbook tasks
 @app.route('/get-playbook', methods=['GET'])
 def get_playbook():
