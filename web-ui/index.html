@@ -68,12 +68,14 @@
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-lg font-semibold mb-2">مانیتورینگ</h2>
-                    <p id="monitoring-status" class="text-gray-700"></p>
-                    <p id="monitoring-status" class="text-gray-700"></p>
+                    <div class="flex flex-row justify-between">
+                        <h2 class="text-lg font-semibold mb-2">مانیتورینگ</h2>
+                        <p id="monitoring-status" class="text-gray-700"></p>
+                    </div>
+                    <p id="monitoring-playbook-status" class="text-gray-700"></p>
                     <div class="flex flex-row justify-around flex-wrap">
                         <button
-                            onclick="runMonitoringPlaybook()"
+                            onclick="Monitoringstatus()"
                             class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                         >
                             وضعیت
@@ -113,6 +115,26 @@
         </div>
 
         <script>
+            async function Monitoringstatus() {
+                const statusElem = document.getElementById("monitoring-status");
+                statusElem.style.color = "";
+                statusElem.innerText = "بررسی وضعیت...";
+
+                try {
+                    const response = await fetch("http://192.168.56.10:5005/monitoring-status");
+                    const data = await response.json();
+                    if (data.status == "فعال") {
+                        statusElem.innerText = data.status;
+                        statusElem.style.color = "green";
+                    } else {
+                        statusElem.innerText = data.status;
+                        statusElem.style.color = "red";
+                    }
+                } catch (error) {
+                    statusElem.innerText = "مشکلی رخ داده است";
+                    statusElem.style.color = "red";
+                }
+            }
             async function fetchStatus(group) {
                 const statusElem = document.getElementById(`ping-${group}-status`);
                 statusElem.style.color = "";
@@ -181,13 +203,13 @@
             }
 
             async function runMonitoringPlaybook() {
-                document.getElementById("monitoring-status").innerText = "در حال بارگذاری...";
+                document.getElementById("monitoring-playbook-status").innerText = "در حال بارگذاری...";
                 try {
                     const response = await fetch("http://192.168.56.10:5005/monitoring");
                     const data = await response.json();
-                    document.getElementById("monitoring-status").innerText = data.status;
+                    document.getElementById("monitoring-playbook-status").innerText = data.status;
                 } catch (error) {
-                    document.getElementById("monitoring-status").innerText = "خطا در ارتباط با سرور";
+                    document.getElementById("monitoring-playbook-status").innerText = "خطا در ارتباط با سرور";
                 }
             }
 

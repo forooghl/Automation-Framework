@@ -8,7 +8,7 @@ CORS(app)
 load_dotenv()
 api_key = os.getenv('GRAFANA_API_KEY')
 
-def run_playbook(playbook_name, extra_vars=None):
+def run_playbook(playbook_name, extra_vars=None, task_name=None):
     try:
         full_playbook_path = os.path.join('/home/vagrant/ansible/playbooks/', playbook_name)
         cmd = ['ansible-playbook', '-i', '/home/vagrant/ansible/inventories/dev/hosts.ini',  full_playbook_path]
@@ -17,6 +17,10 @@ def run_playbook(playbook_name, extra_vars=None):
             cmd.append('--extra-vars')
             cmd.append(extra_vars_str
                     )
+            
+        if task_name:
+            cmd.append('--start-at-task')
+            cmd.append(task_name)
             
         # Prompt for vault password or use a file if available
         vault_password_file = '/home/vagrant/ansible/vault_password'  # Adjust path as needed
@@ -188,6 +192,14 @@ def get_playbook():
     result = get_playbook_details(f"{playbook_name}_config.yml")
     if result["status"] == "success":
         return jsonify({"title": f"نمایش وظایف پیکربندی {playbook_name}", "status": "success", "playbook": result["playbook"]})
+    return jsonify(result)
+
+# Static endpoint for monitoring status
+@app.route('/monitoring-status', methods=['GET'])
+def check_monitoring_status():
+    result = run_playbook('monitoring_config.yml', task_name='Verify services are running')
+    if result["status"] == "success":
+        return jsonify({"status": "فعال", "details": result["output"]})
     return jsonify(result)
 
 # Endpoint to ping devices with dynamic group name
