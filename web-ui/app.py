@@ -57,19 +57,6 @@ def get_monitoring_status():
         return jsonify({"status": "مانیتورینگ: Prometheus و Grafana فعال"})
     return jsonify(result)
 
-# endpoint برای اعمال تنظیمات
-@app.route('/configure', methods=['POST'])
-def configure_device():
-    data = request.get_json()
-    device = data.get('device')
-    command = data.get('command')
-    playbook_name = 'vyos_config.yml' if device.startswith('device') else 'server_config.yml'
-    result = run_playbook(playbook_name, extra_vars={"command": command})
-    if result["status"] == "success":
-        return jsonify({"message": f"تنظیمات برای {device} اعمال شد"})
-    return jsonify(result)
-
-
 # endpoint Running backup playbook
 @app.route('/run-recovery', methods=['GET'])
 def run_recovery():
