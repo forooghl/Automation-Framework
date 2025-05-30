@@ -105,6 +105,47 @@
                 ></div>
             </section>
 
+            <section class="bg-white p-4 rounded-lg shadow-md mb-6">
+                <h2 class="text-lg font-semibold mb-4">مانیتورینگ</h2>
+                <button onclick="showMetrics()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    نمایش معیارها
+                </button>
+                <div id="metrics" class="grid grid-cols-2 grid-rows-2 gap-4 hidden">
+                    <div>
+                        <iframe
+                            src="http://192.168.56.12:3000/d-solo/rYdddlPWk/node-exporter-full?orgId=1&from=1748536475237&to=1748622875237&timezone=browser&var-DS_PROMETHEUS=dekgl58ae08aod&var-job=node&var-node=192.168.56.12:9100&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B%7Cmmcblk%5B0-9%5D%2B&refresh=1m&panelId=77&__feature.dashboardSceneSolo"
+                            width="450"
+                            height="200"
+                            frameborder="0"
+                        ></iframe>
+                    </div>
+                    <div>
+                        <iframe
+                            src="http://192.168.56.12:3000/d-solo/rYdddlPWk/node-exporter-full?orgId=1&from=1748537158553&to=1748623558553&timezone=browser&var-DS_PROMETHEUS=dekgl58ae08aod&var-job=node&var-node=192.168.56.12:9100&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B%7Cmmcblk%5B0-9%5D%2B&refresh=1m&panelId=78&__feature.dashboardSceneSolo"
+                            width="450"
+                            height="200"
+                            frameborder="0"
+                        ></iframe>
+                    </div>
+                    <div>
+                        <iframe
+                            src="http://192.168.56.12:3000/d-solo/rYdddlPWk/node-exporter-full?orgId=1&from=1748537234021&to=1748623634021&timezone=browser&var-DS_PROMETHEUS=dekgl58ae08aod&var-job=node&var-node=192.168.56.12:9100&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B%7Cmmcblk%5B0-9%5D%2B&refresh=1m&panelId=74&__feature.dashboardSceneSolo"
+                            width="450"
+                            height="200"
+                            frameborder="0"
+                        ></iframe>
+                    </div>
+                    <div>
+                        <iframe
+                            src="http://192.168.56.12:3000/d-solo/rYdddlPWk/node-exporter-full?orgId=1&from=1748537234021&to=1748623634021&timezone=browser&var-DS_PROMETHEUS=dekgl58ae08aod&var-job=node&var-node=192.168.56.12:9100&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B%7Cmmcblk%5B0-9%5D%2B&refresh=1m&panelId=152&__feature.dashboardSceneSolo"
+                            width="450"
+                            height="200"
+                            frameborder="0"
+                        ></iframe>
+                    </div>
+                </div>
+            </section>
+
             <section class="bg-white p-4 rounded-lg shadow-md">
                 <h2 class="text-lg font-semibold mb-4">اجرای بکاپ (بازیابی)</h2>
                 <button onclick="runRecoveryScript()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
@@ -115,6 +156,9 @@
         </div>
 
         <script>
+            function showMetrics() {
+                document.getElementById("metrics").style.display = "block";
+            }
             async function Monitoringstatus() {
                 const statusElem = document.getElementById("monitoring-status");
                 statusElem.style.color = "";
@@ -226,6 +270,7 @@
 
             fetchStatus("network-devices");
             fetchStatus("servers");
+            Monitoringstatus();
         </script>
     </body>
 </html>
